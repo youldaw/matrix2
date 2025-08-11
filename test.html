@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Привет, это Твой Код Личности</title>
+  <meta name="description" content="Ты попал сюда не просто так, здесь начинается настоящее изучение твоей личности!" />
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="16x16" />
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #f9f6ef;
+      color: #333;
+    }
+    .container {
+      max-width: 400px;
+      margin: 0 auto;
+      padding: 15px;
+    }
+
+    
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    
+    <div class="circle-block">
+      <!-- markaziy doira rasm yoki kontent kerak bo‘lsa qo‘shish mumkin -->
+      <img src="/hero-circles/leaf-1.png" alt="Circle" style="width: 85px; height: 85px;" />
+    </div>
+
+    <div>
+    <h1 class="title">
+        <span class="animated-up">Привет, это</span><br>
+        <span class="gradient-text animated-left">Твой Код Личности</span>
+    </h1>
+
+
+      <p class="description">Ты попал сюда не просто так, здесь начинается настоящее изучение твоей личности!</p>
+    </div>
+
+    <div class="gender-buttons">
+      <div class="gender-button">
+        <img src="images/hero-content/women.png" alt="Женщина" />
+        <span>Я женщина</span>
+      </div>
+      <div class="gender-button">
+        <img src="images/hero-content/men.png" alt="Мужчина" />
+        <span>Я мужчина</span>
+      </div>
+    </div>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // 1. Привет, это – pasdan tepaga chiqadigan
+            const upTextEl = document.querySelector('.animated-up');
+            const upText = upTextEl.textContent;
+            upTextEl.textContent = '';
+
+            upText.split('').forEach((char, i) => {
+            const span = document.createElement('span');
+            span.textContent = char;
+            span.style.animationDelay = `${i * 0.05}s`;
+            upTextEl.appendChild(span);
+            });
+
+            // 2. Твой Код Личности – chapdan o‘ngga chiqadigan
+            const leftTextEl = document.querySelector('.animated-left');
+            const leftText = leftTextEl.textContent;
+            leftTextEl.textContent = '';
+
+            leftText.split('').forEach((char, i) => {
+            const span = document.createElement('span');
+            span.textContent = char;
+            span.style.animationDelay = `${i * 0.05}s`;
+            leftTextEl.appendChild(span);
+            });
+        });
+    </script>
+
+
+
+  </div>
+</body>
+</html>
