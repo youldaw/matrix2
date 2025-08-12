@@ -222,7 +222,7 @@ function startProgress() {
         return;
       }
 
-      let $currentActive = $(".pause-number.active");
+      let $currentActive = $(".pause-number.active b");
       if ($currentActive.length) {
         let randNum = Math.floor(Math.random() * maxRand) + 1;
         $currentActive.text(randNum);
@@ -261,23 +261,6 @@ $(document).ready(function () {
     $(this).addClass('active');
   });
 
-  // $('.gender-button').click(function () {
-  //   if ($(this).hasClass('active')) return; // agar allaqachon aktiv bo'lsa, chiqish
-
-  //   // Bosilgan tugmaga active klass qo'shamiz
-  //   $(this).addClass('active');
-
-  //   // Boshqa tugmalarga inactive klass qo'shamiz
-  //   $('.gender-button').not(this).addClass('inactive');
-
-  //   // Bosilgan tugma uchun span ni yo'q qilish uchun opacity=0 CSS orqali qo'yilgan
-
-  //   // 1 sekunddan so'ng (animatsiya oxiri) istalgan qo‘shimcha ishlar bo‘lsa shu yerga yozsa bo‘ladi
-  //   setTimeout(() => {
-  //     // Masalan, keyingi sahifaga o'tish yoki boshqa action
-  //     // alert('Animatsiya tugadi, keyingi qadam!');
-  //   }, 1000);
-  // });
 });
 
 
