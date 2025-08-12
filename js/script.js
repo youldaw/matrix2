@@ -132,6 +132,8 @@ $(document).ready(function(){
       );
     }
 
+    let usedIndexes = []; // ishlatilgan indekslar
+
     function goNext() {
       if (currentPercent < 100) {
         currentPercent++;
@@ -139,10 +141,22 @@ $(document).ready(function(){
         updateProgress(currentPercent);
 
         if (currentPercent === pauses[pauseIndex]) {
-          // RANDOM pause-number tanlash
-          let randomIndex = Math.floor(Math.random() * $pauseNumbers.length);
-          let $activeNum = $pauseNumbers.eq(randomIndex);
+          // Qolgan indekslarni olish
+          let availableIndexes = $pauseNumbers
+            .map((i) => !usedIndexes.includes(i) ? i : null)
+            .get();
 
+          if (availableIndexes.length === 0) {
+            // Hammasi ishlatilgan bo‘lsa, qaytib ishlatmaslik uchun tugatamiz
+            goNext();
+            return;
+          }
+
+          // Tasodifiy bittasini tanlash
+          let randIdx = availableIndexes[Math.floor(Math.random() * availableIndexes.length)];
+          usedIndexes.push(randIdx);
+
+          let $activeNum = $pauseNumbers.eq(randIdx);
           $pauseNumbers.removeClass("active");
           $activeNum.addClass("active");
 
@@ -178,6 +192,7 @@ $(document).ready(function(){
     }
 
     goNext();
+
 
   }
 
