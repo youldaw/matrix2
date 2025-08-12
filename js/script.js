@@ -69,7 +69,6 @@ $(function(){
 });
 
 
-
 $(document).ready(function(){
 
   function goToStep(index) {
@@ -85,6 +84,11 @@ $(document).ready(function(){
 
     contents.removeClass("active");
     contents.eq(index).addClass("active");
+
+    // Step-four (index 3) bo'lsa progressni ishga tushiramiz
+    if (index === 3) {
+      startProgress();
+    }
   }
 
   // Step bosganda
@@ -94,7 +98,7 @@ $(document).ready(function(){
 
   // Next tugmasi
   $('.next').click(function(e){
-    e.preventDefault(); // sahifa reload bo'lishini to'xtatadi
+    e.preventDefault();
     let currentIndex = $('.tab-steps--list li.active').last().index();
     goToStep(currentIndex + 1);
   });
@@ -106,8 +110,90 @@ $(document).ready(function(){
     goToStep(currentIndex - 1);
   });
 
+  // Progress kodini funksiya qilib ajratdik
+  function startProgress() {
+    let $percent = $(".percent-value");
+    let $pauseNumbers = $(".pause-number");
+    let $progress = $(".progress");
+
+    let currentPercent = 0;
+    let speed = 50; 
+    let pauses = [20, 40, 60, 80, 100];
+    let pauseIndex = 0;
+    let maxRand = 0;
+
+    $(".matrix").hide();
+
+    function updateProgress(percent) {
+      let deg = (percent / 100) * 360;
+      $progress.css(
+        "background",
+        `conic-gradient(#D0B15A ${deg}deg, rgba(148, 153, 129, 0) ${deg}deg)`
+      );
+    }
+
+    function goNext() {
+      if (currentPercent < 100) {
+        currentPercent++;
+        $percent.text(currentPercent + "%");
+        updateProgress(currentPercent);
+
+        if (currentPercent === pauses[pauseIndex]) {
+          // RANDOM pause-number tanlash
+          let randomIndex = Math.floor(Math.random() * $pauseNumbers.length);
+          let $activeNum = $pauseNumbers.eq(randomIndex);
+
+          $pauseNumbers.removeClass("active");
+          $activeNum.addClass("active");
+
+          maxRand = Math.random() < 0.5 ? 10 : 20;
+
+          let pauseInterval = setInterval(function () {
+            let randNum = Math.floor(Math.random() * maxRand) + 1;
+            $activeNum.text(randNum);
+          }, speed);
+
+          pauseIndex++;
+
+          setTimeout(function () {
+            clearInterval(pauseInterval);
+            goNext();
+          }, 2000);
+
+          return;
+        }
+
+        let $currentActive = $(".pause-number.active");
+        if ($currentActive.length) {
+          let randNum = Math.floor(Math.random() * maxRand) + 1;
+          $currentActive.text(randNum);
+        }
+
+        setTimeout(goNext, speed);
+      } else {
+        $(".first-show").fadeOut(500, function () {
+          $(".matrix").fadeIn(500);
+        });
+      }
+    }
+
+    goNext();
+
+  }
+
 });
 
+
+
+
+
+
+// dropdown
+$(document).ready(function () {
+  $(".dropdown-btn").on("click", function () {
+    $(this).closest(".dropdown").toggleClass("active");
+  });
+});
 
 
 
