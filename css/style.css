@@ -724,21 +724,22 @@ a, span, button {
 
 .dropdown-btn {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   width: 100%;
   padding: 0;
   border: none;
   background: transparent;
   cursor: pointer;
+  gap: 0 10px;
+  text-align: left;
 }
 .dropdown-btn .text {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 0 6px;
   font-weight: 600;
   font-size: 16px;
-  line-height: 140%;
   color: #736C5A;
 }
 .num {
