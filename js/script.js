@@ -189,11 +189,16 @@ $(document).ready(function(){
 
 
 // dropdown
-$(document).ready(function () {
-  $(".dropdown-btn").on("click", function () {
-    $(this).closest(".dropdown").toggleClass("active");
-  });
+$(".dropdown-btn").on("click", function () {
+  let $dropdown = $(this).closest(".dropdown");
+  let $menu = $dropdown.find(".dropdown-menu");
+
+  // Yopiq bo‘lsa ochamiz, ochiq bo‘lsa yopamiz
+  $menu.stop(true, true).slideToggle(300);
+  $dropdown.toggleClass("active");
 });
+
+
 
 
 
