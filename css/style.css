@@ -87,7 +87,7 @@ a, span, button {
 }
 
 .container {
-	max-width: 400px;
+	max-width: 430px;
 	margin-left: auto;
 	margin-right: auto;
 	padding-left: 15px;
@@ -282,7 +282,7 @@ a, span, button {
 	font-weight: 500;
 	font-size: 16px;
 	line-height: 1;
-	letter-spacing: -0.03em;
+	letter-spacing: 0.03em;
 	color: #736C5A80;
 }
 .back-btn span svg {
@@ -292,7 +292,7 @@ a, span, button {
 	font-weight: 600;
 	font-size: 16px;
 	line-height: 140%;
-	letter-spacing: -0.01em;
+	letter-spacing: 0.01em;
 	color: #736C5A;
 	margin-bottom: 32px;
 }
@@ -313,17 +313,17 @@ a, span, button {
 	background-color: #FFFDF8;
 	background-repeat: no-repeat;
 	background-position: right center;
-  opacity: .6;
   transition: .3s all ease;
+  opacity: 0.6;
 }
-.relationship-item:hover {
+.relationship-item.active {
   opacity: 1;
 }
 .relationship-item span {
 	font-weight: 600;
 	font-size: 15px;
 	line-height: 140%;
-	letter-spacing: -0.02em;
+	letter-spacing: 0.02em;
 	color: #8F8A7C;
 	display: block;
 	margin-bottom: 4px;
@@ -332,7 +332,7 @@ a, span, button {
 	font-weight: 400;
 	font-size: 14px;
 	line-height: 140%;
-	letter-spacing: -0.03em;
+	letter-spacing: 0.03em;
 	color: #8F8A7C;
 }
 .relationship-item.one {
@@ -357,7 +357,7 @@ a, span, button {
   text-align: center;
   color: #FFFFFF;
   width: 100%;
-  padding: 18px;
+  padding: 14px;
   border-radius: 12px;
   background: linear-gradient(90deg, #D0B159 0%, #949981 100%);
 }
@@ -375,7 +375,7 @@ a, span, button {
 }
 .gradient-text {
 	font-weight: 600;
-	font-size: 33px;
+	font-size: 30px;
 	line-height: 140%;
 	background: radial-gradient(50% 107.16% at 50% 50%, #D0B159 20.69%, rgba(88, 96, 63, 0.6) 100%);
 	-webkit-background-clip: text;
@@ -388,10 +388,8 @@ a, span, button {
 	font-weight: 400;
 	font-size: 14px;
 	line-height: 140%;
-	letter-spacing: -0.03em;
 	color: #736C5A;
-	max-width: 323px;
-	margin-bottom: 40px;
+	margin-bottom: 50px;
 }
 .main-text.text-center .h2 {
   font-weight: 600;
@@ -406,7 +404,6 @@ a, span, button {
   font-weight: 400;
   font-size: 14px;
   line-height: 140%;
-  letter-spacing: -0.03em;
   color: #736C5A;
   margin: 15px auto 0;
 }
@@ -455,49 +452,76 @@ a, span, button {
 }
 
 
- .gender-buttons {
+.gender-buttons {
 	display: flex;
-	justify-content: center;
+	justify-content: flex-start;
+	align-items: flex-end;
+	margin-bottom: -8px;
 }
 .gender-button {
-	width: 48%;
+	width: 50%;
 	position: relative;
 	cursor: pointer;
-	border-radius: 24px;
-	overflow: hidden;
-	transform: matrix(1, 0.05, 0.05, -1, 0, 0);
-	filter: drop-shadow(37px -54px 26px rgba(49, 40, 23, 0.01))
-			drop-shadow(21px -30px 22px rgba(49, 40, 23, 0.03))
-			drop-shadow(9px -13px 16px rgba(49, 40, 23, 0.04))
-			drop-shadow(2px -3px 9px rgba(49, 40, 23, 0.05));
+	transition: transform 0.3s ease;
+	opacity: 0;
+	transform: translateY(50px);
+	animation: slideUp 0.6s ease forwards;
 }
-.gender-button:focus {
-	transform: scale(1.1) rotate(3deg);
+.gender-button {
+  transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
-.gender-button::after {
-	content: "";
-	position: absolute;
-	inset: 0;
-	background: linear-gradient(
-		to top,
-		rgba(40, 30, 20, .6) 10%,
-		rgba(210, 180, 140, 0.65) 50%,
-		rgba(210, 180, 140, 0.35) 60%,
-		rgba(210, 180, 140, 0) 80%
-	);
-	filter: blur(8px);
-	z-index: 1;
-	height: 40%;
-	bottom: 0;
-	top: auto;
-}
 .gender-button.women {
-	transform: rotate(-3deg);
+	margin-right: -15px;
+	animation: slideUpWomen 0.6s ease forwards;
+	animation-delay: 0.2s;
 }
 .gender-button.men {
-	transform: rotate(3deg);
-	margin-left: -20px;
+	margin-left: -15px;
+	animation: slideUpMen 0.6s ease forwards;
+	animation-delay: 0.6s;
+}
+
+@keyframes slideUpWomen {
+	from {
+		opacity: 0;
+		transform: rotate(-2deg) translateY(50px);
+	}
+	to {
+		opacity: 1;
+		transform: rotate(-2deg) translateY(0);
+	}
+}
+@keyframes slideUpMen {
+	from {
+		opacity: 0;
+		transform: rotate(2deg) translateY(50px);
+	}
+	to {
+		opacity: 1;
+		transform: rotate(2deg) translateY(0);
+	}
+}
+
+.gender-button .gradient-overlay {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	height: 110px;
+	border-bottom-left-radius: 24px;
+	border-bottom-right-radius: 24px;
+	background: linear-gradient(
+		to bottom,
+		rgba(167, 147, 123, 0) 0%,
+		rgba(65, 49, 34, 0.7) 100%
+	);
+	pointer-events: none;
+	z-index: 0;
+}
+
+.gender-button.men .gender-button-inner {
+	transform: rotate(1deg);
 }
 .gender-button img {
 	width: 100%;
@@ -506,20 +530,42 @@ a, span, button {
 	display: block;
 }
 .gender-button span {
-	position: absolute;
-	bottom: 20px;
-	left: 50%;
-	transform: translateX(-50%);
-	width: 100%;
-	text-align: center;
-	font-weight: 400;
-	font-size: 20px;
-	line-height: 140%;
-	letter-spacing: -0.01em;
-	color: #fff;
-	z-index: 3;
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  text-align: center;
+  font-weight: bolder;
+  font-size: 18px;
+  letter-spacing: 0.01em;
+  color: #fff;
+  z-index: 3;
 }
 
+.gender-button {
+  position: relative;
+  top: 0;
+  transition: top 1s ease, opacity 1s ease;
+  cursor: pointer;
+}
+
+.gender-button.active {
+  top: -30px;
+  cursor: default;
+  z-index: 5;
+}
+
+.gender-button.active span {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.gender-button.inactive {
+  opacity: 0.5 !important;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
 
 
 
@@ -544,6 +590,19 @@ a, span, button {
   justify-content: space-between;
   padding: 0;
   overflow: hidden;
+  position: relative;
+}
+.tab-steps--list::before {
+  content: "";
+  display: inline-block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  width: 100%;
+  height: 4px;
+  background-color: #EAE6DD;
 }
 
 .tab-steps--list li {
@@ -561,7 +620,7 @@ a, span, button {
   height: 4px;
   width: 0;
   position: absolute;
-  left: -60px;
+  left: -80px;
   top: 0;
   bottom: 0;
   margin: auto;
@@ -572,7 +631,7 @@ a, span, button {
   transition: .5s all ease;
 }
 .tab-steps--list li.active::before {
-  width: 60px;
+  width: 80px;
 }
 .tab-steps--list li.one.active::before {
   background: transparent;
@@ -595,34 +654,34 @@ a, span, button {
 }
 .tab-steps--list li.one,
 .tab-steps--list li.one::after {
-	width: 18px;
-	height: 18px;
+	width: 8px;
+	height: 8px;
 	background-color: #949981;
 }
 .tab-steps--list li.two,
 .tab-steps--list li.two::after {
-	width: 24px;
-	height: 24px;
+	width: 14px;
+	height: 14px;
 }
 .tab-steps--list li.three,
 .tab-steps--list li.three::after {
-	width: 28px;
-	height: 28px;
+	width: 18px;
+	height: 18px;
 }
 .tab-steps--list li.four,
 .tab-steps--list li.four::after {
-	width: 32px;
-	height: 32px;
+	width: 20px;
+	height: 20px;
 }
 .tab-steps--list li.five,
 .tab-steps--list li.five::after {
-	width: 40px;
-	height: 40px;
+	width: 24px;
+	height: 24px;
 }
 
 .tab-steps--list li::after {
   content: "";
-  display: inline-block;
+  display: flex;
   cursor: pointer;
   background-color: #EAE6DD;
   border-radius: 50%;
@@ -675,10 +734,18 @@ a, span, button {
 }
 .pause-number {
   opacity: 0.5;
+  transition: .3s all ease;
+}
+.pause-number b {
+  opacity: 0;
+  font-weight: 400;
 }
 .pause-number.active {
   background: #ff9800;
   color: #fff;
+  opacity: 1;
+}
+.pause-number.active b {
   opacity: 1;
 }
 
@@ -931,7 +998,7 @@ a, span, button {
   text-align: center;
   overflow: hidden;
   font-size: 20px;
-  color: #ddd;
+  color: #3b4233;
 }
 .select-wrap:before, .select-wrap:after {
   position: absolute;
@@ -939,15 +1006,23 @@ a, span, button {
   display: block;
   content: "";
   width: 100%;
-  height: 50%;
+  height: 43%;
 }
 .select-wrap:before {
   top: 0;
-  background-image: linear-gradient(to bottom, rgba(1, 1, 1, 0.5), rgba(1, 1, 1, 0));
+  background: #FFF;
+  background: -webkit-linear-gradient(180deg, rgba(255, 255, 255, 1) 0%, rgba(237, 221, 83, 0) 100%);
+  background: -moz-linear-gradient(180deg, rgba(255, 255, 255, 1) 0%, rgba(237, 221, 83, 0) 100%);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 1) 0%, rgba(237, 221, 83, 0) 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#FFFFFF", endColorstr="#EDDD53", GradientType=0);
 }
 .select-wrap:after {
   bottom: 0;
-  background-image: linear-gradient(to top, rgba(1, 1, 1, 0.5), rgba(1, 1, 1, 0));
+  background: #FFF;
+  background: -webkit-linear-gradient(0deg, rgba(255, 255, 255, 1) 0%, rgba(237, 221, 83, 0) 100%);
+  background: -moz-linear-gradient(0deg, rgba(255, 255, 255, 1) 0%, rgba(237, 221, 83, 0) 100%);
+  background: linear-gradient(0deg, rgba(255, 255, 255, 1) 0%, rgba(237, 221, 83, 0) 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#FFFFFF", endColorstr="#EDDD53", GradientType=0);
 }
 .select-wrap .select-options {
   position: absolute;
@@ -1276,9 +1351,7 @@ a, span, button {
   top: 50%;
   transform: translate(0, -50%);
   width: 100%;
-  background-color: #000;
-  border-top: 1px solid #333;
-  border-bottom: 1px solid #333;
+  background-color: #f4f2ef;
   font-size: 24px;
   overflow: hidden;
 }
@@ -1298,7 +1371,8 @@ a, span, button {
   align-items: stretch;
   justify-content: space-between;
   width: 100%;
-  height: 300px;
+  height: 200px;
+  background: #fffdf8;
 }
 .date-selector > div {
   flex: 1;

@@ -1,75 +1,83 @@
+
+// main text animation
 $(function () {
-    // 1. Привет, это – down to up
-    let upTextEl = $('.animated-up');
-    let upText = upTextEl.text();
-    upTextEl.empty();
+  // 1. Привет, это – down to up
+  let upTextEl = $('.animated-up');
+  let upText = upTextEl.text();
+  upTextEl.empty();
 
-    $.each(upText.split(''), function (i, char) {
-      $('<span>')
-        .text(char)
-        .css('animation-delay', (i * 0.05) + 's')
-        .appendTo(upTextEl);
-    });
+  $.each(upText.split(''), function (i, char) {
+    $('<span>')
+      .text(char)
+      .css('animation-delay', (i * 0.05) + 's')
+      .appendTo(upTextEl);
+  });
 
-    // 2. Твой Код Личности – left to right
-    let leftTextEl = $('.animated-left');
-    let leftText = leftTextEl.text();
-    leftTextEl.empty();
+  // 2. Твой Код Личности – left to right
+  let leftTextEl = $('.animated-left');
+  let leftText = leftTextEl.text();
+  leftTextEl.empty();
 
-    $.each(leftText.split(''), function (i, char) {
-      $('<span>')
-        .text(char)
-        .css('animation-delay', (i * 0.05) + 's')
-        .appendTo(leftTextEl);
-    });
-});
-
-$(function(){
-    var $center = $(".main-numbers .center");
-
-    // Sanash ketma-ketligi
-    var sequences = [
-        [1, 8],
-        [8, 3],
-        [3, 10],
-        [10, 15],
-        [15, 22],
-        [22, 10],
-        [10, 3],
-        [3, 10],
-        [10, 22]
-    ];
-
-    var stepIndex = 0;
-
-    function count(from, to, callback) {
-        var current = from;
-        $center.text(current);
-        var step = from < to ? 1 : -1;
-
-        var timer = setInterval(function(){
-            current += step;
-            $center.text(current);
-            if (current === to) {
-                clearInterval(timer);
-                setTimeout(callback, 600); // pauza
-            }
-        }, 200); // sanash tezligi
-    }
-
-    function runSequence() {
-        var seq = sequences[stepIndex];
-        count(seq[0], seq[1], function(){
-            stepIndex = (stepIndex + 1) % sequences.length;
-            runSequence();
-        });
-    }
-
-    runSequence();
+  $.each(leftText.split(''), function (i, char) {
+    $('<span>')
+      .text(char)
+      .css('animation-delay', (i * 0.05) + 's')
+      .appendTo(leftTextEl);
+  });
 });
 
 
-$(document).ready(function(){
+// main counter
+$(function () {
+  var $center = $(".main-numbers .center");
+
+  // Sanash ketma-ketligi
+  var sequences = [
+    [1, 8],
+    [8, 3],
+    [3, 10],
+    [10, 15],
+    [15, 22],
+    [22, 10],
+    [10, 3],
+    [3, 10],
+    [10, 22]
+  ];
+
+  var stepIndex = 0;
+
+  function count(from, to, callback) {
+    var current = from;
+    $center.text(current);
+    var step = from < to ? 1 : -1;
+
+    var timer = setInterval(function () {
+      current += step;
+      $center.text(current);
+      if (current === to) {
+        clearInterval(timer);
+        setTimeout(callback, 600); // pauza
+      }
+    }, 200); // sanash tezligi
+  }
+
+  function runSequence() {
+    var seq = sequences[stepIndex];
+    count(seq[0], seq[1], function () {
+      stepIndex = (stepIndex + 1) % sequences.length;
+      runSequence();
+    });
+  }
+
+  runSequence();
+});
+
+
+$(document).ready(function () {
+
+  function resetGenderButtons() {
+    $('.gender-button').removeClass('active inactive');
+  }
 
   function goToStep(index) {
     let steps = $('.tab-steps--list li');
@@ -78,7 +86,7 @@ $(document).ready(function(){
     if (index < 0) index = 0;
     if (index >= steps.length) index = steps.length - 1;
 
-    steps.each(function(i) {
+    steps.each(function (i) {
       $(this).toggleClass('active', i <= index);
     });
 
@@ -89,130 +97,188 @@ $(document).ready(function(){
     if (index === 3) {
       startProgress();
     }
+
+    // Agar step 0 ga qaytilsa gender-buttonlarni default holatga qaytaramiz
+    if(index === 0) {
+      resetGenderButtons();
+    }
   }
 
   // Step bosganda
-  $('.tab-steps--list li').click(function(){
-    goToStep($(this).index());
+  $('.tab-steps--list li').click(function () {
+    let targetIndex = $(this).index();
+    setTimeout(function () {
+      goToStep(targetIndex);
+      resetGenderButtons();
+    }, 1000);
   });
 
   // Next tugmasi
-  $('.next').click(function(e){
+  $('.next').click(function (e) {
     e.preventDefault();
     let currentIndex = $('.tab-steps--list li.active').last().index();
-    goToStep(currentIndex + 1);
+    setTimeout(function () {
+      goToStep(currentIndex + 1);
+      resetGenderButtons();
+    }, 800);
   });
 
   // Prev tugmasi
-  $('.prev').click(function(e){
+  $('.prev').click(function (e) {
     e.preventDefault();
     let currentIndex = $('.tab-steps--list li.active').last().index();
-    goToStep(currentIndex - 1);
+    setTimeout(function () {
+      goToStep(currentIndex - 1);
+      resetGenderButtons();
+    }, 800);
   });
 
-  // Progress kodini funksiya qilib ajratdik
-  function startProgress() {
-    let $percent = $(".percent-value");
-    let $pauseNumbers = $(".pause-number");
-    let $progress = $(".progress");
+  // Gender-button bosilganda animatsiya va keyingi stepga o'tish
+  $('.gender-button.next').click(function () {
+    if ($(this).hasClass('active')) return;
 
-    let currentPercent = 0;
-    let speed = 50; 
-    let pauses = [20, 40, 60, 80, 100];
-    let pauseIndex = 0;
-    let maxRand = 0;
+    $(this).addClass('active');
+    $('.gender-button').not(this).addClass('inactive');
 
-    $(".matrix").hide();
+    setTimeout(() => {
+      goToStep(1);  // 2-chi stepga o'tish
+      resetGenderButtons(); // keyingi stepga o'tgach default holatga qaytish
+    }, 1000);
+  });
 
-    function updateProgress(percent) {
-      let deg = (percent / 100) * 360;
-      $progress.css(
-        "background",
-        `conic-gradient(#D0B15A ${deg}deg, rgba(148, 153, 129, 0) ${deg}deg)`
-      );
-    }
 
-    let usedIndexes = []; // ishlatilgan indekslar
 
-    function goNext() {
-      if (currentPercent < 100) {
-        currentPercent++;
-        $percent.text(currentPercent + "%");
-        updateProgress(currentPercent);
+});
 
-        if (currentPercent === pauses[pauseIndex]) {
-          // Qolgan indekslarni olish
-          let availableIndexes = $pauseNumbers
-            .map((i) => !usedIndexes.includes(i) ? i : null)
-            .get();
 
-          if (availableIndexes.length === 0) {
-            // Hammasi ishlatilgan bo‘lsa, qaytib ishlatmaslik uchun tugatamiz
-            goNext();
-            return;
-          }
 
-          // Tasodifiy bittasini tanlash
-          let randIdx = availableIndexes[Math.floor(Math.random() * availableIndexes.length)];
-          usedIndexes.push(randIdx);
 
-          let $activeNum = $pauseNumbers.eq(randIdx);
-          $pauseNumbers.removeClass("active");
-          $activeNum.addClass("active");
 
-          maxRand = Math.random() < 0.5 ? 10 : 20;
 
-          let pauseInterval = setInterval(function () {
-            let randNum = Math.floor(Math.random() * maxRand) + 1;
-            $activeNum.text(randNum);
-          }, speed);
+// Progress kodini funksiya qilib ajratdik
+function startProgress() {
+  let $percent = $(".percent-value");
+  let $pauseNumbers = $(".pause-number");
+  let $progress = $(".progress");
 
-          pauseIndex++;
+  let currentPercent = 0;
+  let speed = 50;
+  let pauses = [20, 40, 60, 80, 100];
+  let pauseIndex = 0;
+  let maxRand = 0;
 
-          setTimeout(function () {
-            clearInterval(pauseInterval);
-            goNext();
-          }, 2000);
+  $(".matrix").hide();
 
+  function updateProgress(percent) {
+    let deg = (percent / 100) * 360;
+    $progress.css(
+      "background",
+      `conic-gradient(#D0B15A ${deg}deg, rgba(148, 153, 129, 0) ${deg}deg)`
+    );
+  }
+
+  let usedIndexes = []; // ishlatilgan indekslar
+
+  function goNext() {
+    if (currentPercent < 100) {
+      currentPercent++;
+      $percent.text(currentPercent + "%");
+      updateProgress(currentPercent);
+
+      if (currentPercent === pauses[pauseIndex]) {
+        // Qolgan indekslarni olish
+        let availableIndexes = $pauseNumbers
+          .map((i) => !usedIndexes.includes(i) ? i : null)
+          .get();
+
+        if (availableIndexes.length === 0) {
+          // Hammasi ishlatilgan bo‘lsa, qaytib ishlatmaslik uchun tugatamiz
+          goNext();
           return;
         }
 
-        let $currentActive = $(".pause-number.active");
-        if ($currentActive.length) {
+        // Tasodifiy bittasini tanlash
+        let randIdx = availableIndexes[Math.floor(Math.random() * availableIndexes.length)];
+        usedIndexes.push(randIdx);
+
+        let $activeNum = $pauseNumbers.eq(randIdx);
+        $pauseNumbers.removeClass("active");
+        $activeNum.addClass("active");
+
+        maxRand = Math.random() < 0.5 ? 10 : 20;
+
+        let pauseInterval = setInterval(function () {
           let randNum = Math.floor(Math.random() * maxRand) + 1;
-          $currentActive.text(randNum);
-        }
+          $activeNum.text(randNum);
+        }, speed);
 
-        setTimeout(goNext, speed);
-      } else {
-        $(".first-show").fadeOut(500, function () {
-          $(".matrix").fadeIn(500);
-        });
+        pauseIndex++;
+
+        setTimeout(function () {
+          clearInterval(pauseInterval);
+          goNext();
+        }, 2000);
+
+        return;
       }
+
+      let $currentActive = $(".pause-number.active");
+      if ($currentActive.length) {
+        let randNum = Math.floor(Math.random() * maxRand) + 1;
+        $currentActive.text(randNum);
+      }
+
+      setTimeout(goNext, speed);
+    } else {
+      $(".first-show").fadeOut(500, function () {
+        $(".matrix").fadeIn(500);
+      });
     }
-
-    goNext();
-
-
   }
 
+  goNext();
+
+
+}
+
+
+
+
+$(document).ready(function () {
+  // dropdown
+  $(".dropdown-btn").on("click", function () {
+    let $dropdown = $(this).closest(".dropdown");
+    let $menu = $dropdown.find(".dropdown-menu");
+  
+    // Yopiq bo‘lsa ochamiz, ochiq bo‘lsa yopamiz
+    $menu.stop(true, true).slideToggle(300);
+    $dropdown.toggleClass("active");
+  });
+
+
+  $('.relationship-item').click(function () {
+    $('.relationship-item').removeClass('active');
+    $(this).addClass('active');
+  });
+
+  // $('.gender-button').click(function () {
+  //   if ($(this).hasClass('active')) return; // agar allaqachon aktiv bo'lsa, chiqish
+
+  //   // Bosilgan tugmaga active klass qo'shamiz
+  //   $(this).addClass('active');
+
+  //   // Boshqa tugmalarga inactive klass qo'shamiz
+  //   $('.gender-button').not(this).addClass('inactive');
+
+  //   // Bosilgan tugma uchun span ni yo'q qilish uchun opacity=0 CSS orqali qo'yilgan
+
+  //   // 1 sekunddan so'ng (animatsiya oxiri) istalgan qo‘shimcha ishlar bo‘lsa shu yerga yozsa bo‘ladi
+  //   setTimeout(() => {
+  //     // Masalan, keyingi sahifaga o'tish yoki boshqa action
+  //     // alert('Animatsiya tugadi, keyingi qadam!');
+  //   }, 1000);
+  // });
 });
-
-
-
-
-
-
-// dropdown
-$(".dropdown-btn").on("click", function () {
-  let $dropdown = $(this).closest(".dropdown");
-  let $menu = $dropdown.find(".dropdown-menu");
-
-  // Yopiq bo‘lsa ochamiz, ochiq bo‘lsa yopamiz
-  $menu.stop(true, true).slideToggle(300);
-  $dropdown.toggleClass("active");
-});
-
 
 
 
@@ -220,10 +286,10 @@ $(".dropdown-btn").on("click", function () {
 
 
 const easing = {
-  easeOutCubic: function(pos) {
+  easeOutCubic: function (pos) {
     return (Math.pow((pos - 1), 3) + 1);
   },
-  easeOutQuart: function(pos) {
+  easeOutQuart: function (pos) {
     return -(Math.pow((pos - 1), 4) - 1);
   },
 };
@@ -647,8 +713,8 @@ function getYears() {
 
 function getMonths() {
   const monthNames = [
-    'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
-    'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
+    'Yanvar', 'Fevral', 'Mart', 'Aprel', 'May', 'Iyun',
+    'Iyul', 'Avgust', 'Sentyabr', 'Oktyabr', 'Noyabr', 'Dekabr'
   ];
 
   return monthNames.map((name, index) => ({
