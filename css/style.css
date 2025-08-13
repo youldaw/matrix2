@@ -406,6 +406,7 @@ a, span, button {
   line-height: 140%;
   color: #736C5A;
   margin: 15px auto 0;
+  max-width: 340px;
 }
 
 
@@ -750,7 +751,7 @@ a, span, button {
 }
 
 .matrix .gradient-text {
-  font-size: 24px;
+  font-size: 33px;
   margin-bottom: 12px;
 }
 
@@ -784,9 +785,10 @@ a, span, button {
 }
 .dropdown .icon {
   transition: transform 0.3s ease;
+  transform: rotate(180deg);
 }
 .dropdown.active .icon {
-  transform: rotate(180deg);
+  transform: rotate(0deg);
 }
 
 .dropdown-btn {
@@ -852,13 +854,16 @@ a, span, button {
   content: none;
 }
 
+.matrix-img {
+  margin-bottom: 20px;
+}
 .matrix-img img {
-  width: 100%;
+  width: 94%;
 }
 
 .center-precent {
-  width: 108px;
-  height: 108px;
+  width: 88px;
+  height: 88px;
   background-color: #fff;
   box-shadow: 2px 2px 6px 0px #6E69590D;
   z-index: 6;
@@ -875,8 +880,8 @@ a, span, button {
 }
 .center-precent .percent-value {
   /* position: relative; */
-  width: 96px;
-  height: 96px;
+  width: 70px;
+  height: 70px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -894,10 +899,10 @@ a, span, button {
   bottom: 0;
   margin: auto;
   transition: background 0.2s linear;
-  width: 100px;
-  height: 100px;
+  width: 78px;
+  height: 78px;
   z-index: 5;
-  background: linear-gradient(8.89deg, #D0B15A 7.56%, rgba(148, 153, 129, 0) 93.24%);;
+  background: linear-gradient(8.89deg, #D0B15A 7.56%, rgba(148, 153, 129, 0) 93.24%);
   border-radius: 50%;
   box-shadow: none;
 }
@@ -910,8 +915,8 @@ a, span, button {
   top: 0;
   bottom: 0;
   margin: auto;
-  width: 96px;
-  height: 96px;
+  width: 70px;
+  height: 70px;
   background: #fff;
   border-radius: 50%;
 }
@@ -939,10 +944,11 @@ a, span, button {
 .dropdown-text {
   position: relative;
 }
+.lock .nums,
 .dropdown-text p {
   filter: blur(4px);
 }
-.dropdown-text a {
+.lock .lock-btn {
   position: absolute;
   left: 0;
   right: 0;
@@ -968,12 +974,47 @@ a, span, button {
 }
 
 
+.first-show {
+  position: relative;
+  top: 40px;
+}
 .matrix {
   display: none;
 }
 
+.animate-spans {
+  position: relative;
+  height: 43px;
+  overflow: hidden;
+}
+.animate-spans span {
+  font-weight: 600;
+	font-size: 30px;
+	line-height: 140%;
+	background: radial-gradient(50% 107.16% at 50% 50%, #D0B159 20.69%, rgba(88, 96, 63, 0.6) 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+	text-fill-color: transparent;
+	text-shadow: 0px 4px 12px rgba(194, 186, 166, 0.25);
+}
+.animate-spans span {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  font-weight: bold;
+  font-size: 32px;
+  color: #007bff;
+  user-select: none;
+}
 
-
+.animate-spans span.active {
+  opacity: 1;
+  transform: translateY(0);
+}
 
 
 
@@ -1371,8 +1412,10 @@ a, span, button {
   align-items: stretch;
   justify-content: space-between;
   width: 100%;
-  height: 200px;
+  height: 240px;
   background: #fffdf8;
+  border-radius: 15px;
+  overflow: hidden;
 }
 .date-selector > div {
   flex: 1;

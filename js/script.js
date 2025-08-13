@@ -99,7 +99,7 @@ $(document).ready(function () {
     }
 
     // Agar step 0 ga qaytilsa gender-buttonlarni default holatga qaytaramiz
-    if(index === 0) {
+    if (index === 0) {
       resetGenderButtons();
     }
   }
@@ -155,7 +155,7 @@ $(document).ready(function () {
 
 
 
-// Progress kodini funksiya qilib ajratdik
+// Progress kodi
 function startProgress() {
   let $percent = $(".percent-value");
   let $pauseNumbers = $(".pause-number");
@@ -165,7 +165,7 @@ function startProgress() {
   let speed = 50;
   let pauses = [20, 40, 60, 80, 100];
   let pauseIndex = 0;
-  let maxRand = 0;
+  let maxRand = 20;
 
   $(".matrix").hide();
 
@@ -177,7 +177,20 @@ function startProgress() {
     );
   }
 
-  let usedIndexes = []; // ishlatilgan indekslar
+  // Doimiy sonlarni yangilovchi intervallar massiv
+  let intervals = [];
+
+  // Doimiy pauseNumbers sonlarini yangilash
+  $pauseNumbers.each(function () {
+    let $num = $(this);
+    let interval = setInterval(() => {
+      let randNum = Math.floor(Math.random() * maxRand) + 1;
+      $num.text(randNum);
+    }, speed);
+    intervals.push(interval);
+  });
+
+  let usedIndexes = [];
 
   function goNext() {
     if (currentPercent < 100) {
@@ -186,50 +199,39 @@ function startProgress() {
       updateProgress(currentPercent);
 
       if (currentPercent === pauses[pauseIndex]) {
-        // Qolgan indekslarni olish
+        // Active raqamni o'zgartirish
         let availableIndexes = $pauseNumbers
-          .map((i) => !usedIndexes.includes(i) ? i : null)
+          .map((i) => (!usedIndexes.includes(i) ? i : null))
           .get();
 
         if (availableIndexes.length === 0) {
-          // Hammasi ishlatilgan bo‘lsa, qaytib ishlatmaslik uchun tugatamiz
-          goNext();
+          // Hammasi ishlatilgan bo‘lsa, o'zgartirishni to'xtatamiz
+          pauseIndex++;
+          setTimeout(goNext, speed);
           return;
         }
 
-        // Tasodifiy bittasini tanlash
         let randIdx = availableIndexes[Math.floor(Math.random() * availableIndexes.length)];
         usedIndexes.push(randIdx);
 
-        let $activeNum = $pauseNumbers.eq(randIdx);
         $pauseNumbers.removeClass("active");
-        $activeNum.addClass("active");
+        $pauseNumbers.eq(randIdx).addClass("active");
 
+        // maxRand ni o'zgartirish mumkin, agar kerak bo'lsa
         maxRand = Math.random() < 0.5 ? 10 : 20;
-
-        let pauseInterval = setInterval(function () {
-          let randNum = Math.floor(Math.random() * maxRand) + 1;
-          $activeNum.text(randNum);
-        }, speed);
 
         pauseIndex++;
 
-        setTimeout(function () {
-          clearInterval(pauseInterval);
-          goNext();
-        }, 2000);
+        setTimeout(goNext, 1000); // 1 sekund kutib davom etamiz
 
         return;
       }
 
-      let $currentActive = $(".pause-number.active b");
-      if ($currentActive.length) {
-        let randNum = Math.floor(Math.random() * maxRand) + 1;
-        $currentActive.text(randNum);
-      }
-
       setTimeout(goNext, speed);
     } else {
+      // Tugaganda intervalni tozalash
+      intervals.forEach(clearInterval);
+
       $(".first-show").fadeOut(500, function () {
         $(".matrix").fadeIn(500);
       });
@@ -237,9 +239,11 @@ function startProgress() {
   }
 
   goNext();
-
-
 }
+
+
+
+
 
 
 
@@ -249,7 +253,7 @@ $(document).ready(function () {
   $(".dropdown-btn").on("click", function () {
     let $dropdown = $(this).closest(".dropdown");
     let $menu = $dropdown.find(".dropdown-menu");
-  
+
     // Yopiq bo‘lsa ochamiz, ochiq bo‘lsa yopamiz
     $menu.stop(true, true).slideToggle(300);
     $dropdown.toggleClass("active");
@@ -261,8 +265,19 @@ $(document).ready(function () {
     $(this).addClass('active');
   });
 
-});
+  const $spans = $('.animate-spans span');
+  let currentIndex = 0;
+  const count = $spans.length;
 
+  $spans.eq(currentIndex).addClass('active');
+
+  setInterval(() => {
+    $spans.eq(currentIndex).removeClass('active');
+    currentIndex = (currentIndex + 1) % count;
+    $spans.eq(currentIndex).addClass('active');
+  }, 2000);
+
+});
 
 
 
