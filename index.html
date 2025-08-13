@@ -194,13 +194,15 @@
 		
 									<div class="main-text text-center">
 										<div class="title">
-											<span class="h2">Анализируем твою</span><br>
+											<div class="animated-up2">
+												<span class="h2">Анализируем &nbsp; твою</span>
+											</div>
 											<div class="gradient-texdt animate-spans">
 												<span class="active">финансовую зону</span>
-												<span>Твою Зону</span>
-												<span>Чужую Зону</span>
-												<span>Их Зону</span>
-												<span>Всю Зону Целиком</span>
+												<span>твою зону1</span>
+												<span>чужую зону2</span>
+												<span>их зону3</span>
+												<span>всю зону Целиком4</span>
 											</div>
 											<p class="description">Lorem ipsum non aliquam sagittis enim pellentesque in eget ultrices congue.</p>
 										</div>	
@@ -219,7 +221,7 @@
 									<p class="description-bold">уже полностью готов. Осталось только заглянуть внутрь и понять, как использовать это в своей жизни.</p>
 								</div>
 
-								<div class="dropdown active">
+								<div class="dropdown">
 									<button class="dropdown-btn">
 										<span class="text">
 											<span class="num green">5</span>
@@ -305,7 +307,7 @@
 										<div class="dropdown-text">
 											<p>Lorem ipsum auctor eget risus velit scelerisque duis sapien proin nisi a elementum a ac viverra sed leo suspendisse commodo fames viverra risus id. Eget risus velit scelerisque duis sapien proin nisi a elementum a ac viverra </p>
 										</div>
-										<a href="#" class="lock-btn"><img src="images/lock.svg" alt=""> открыть полный доступ</a>
+										<a href="#" class="lock-btn open-modal" data-modal="#modal2"><img src="images/lock.svg" alt=""> открыть полный доступ</a>
 									</div>
 								</div>
 
@@ -331,14 +333,116 @@
 											<span class="num pink">5</span>
 											<span class="num red">5</span>
 										</div>
-										<a href="#" class="lock-btn"><img src="images/lock.svg" alt=""> открыть полный доступ</a>
+										<a href="#" class="lock-btn open-modal" data-modal="#modal2"><img src="images/lock.svg" alt=""> открыть полный доступ</a>
 									</div>
+								</div>
+
+								<div class="show-all-zone">
+									<button class="show-all open-modal" data-modal="#modal2">Посмотреть все зоны 
+										<svg width="12" height="6" viewBox="0 0 12 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+											<path d="M10.6667 1L6.00004 5L1.33337 1" stroke="url(#paint0_linear_2251_91)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+											<defs>
+											<linearGradient id="paint0_linear_2251_91" x1="1.30815" y1="0.990318" x2="5.37276" y2="8.10044" gradientUnits="userSpaceOnUse">
+											<stop stop-color="#58603F"/>
+											<stop offset="1" stop-color="#58603F" stop-opacity="0.7"/>
+											</linearGradient>
+											</defs>
+										</svg>
+									</button>
 								</div>
 							</div>
 						</div>
 					</li>
 				</ul>
 			</div>
+		</div>
+
+		<!-- Modals -->
+		<div class="container">
+			<!-- Modal 1 -->
+			<div class="modal-overlay" id="modal1">
+				<div class="modal auto-modal">
+					<span class="modal-close"><img src="images/close.svg" alt=""> я не хочу сохранять</span>
+
+					<div class="modal-title">
+						<p>Не забудьте</p>
+						<div class="gradient-text">
+							<span>Сохранить результаты</span>
+						</div>
+					</div>
+					<div class="modal-text">
+						<p>Не хотите тратить время на длинные тексты? Получите информацию в удобном формате — MP3 или PDF. Всегда под рукой, когда вам удобно!</p>
+						<div class="gradient-text">
+							<span>Всего $0.49 за результат</span>
+						</div>
+					</div>
+					<div class="modal-btns">
+						<a href="#" class="download-audio"><img src="images/mp3.svg" alt=""> Скачать MP3 </a>
+						<a href="#" class="download-pdf"><img src="images/pdf.svg" alt=""> Скачать PDF</a>
+					</div>
+				</div>
+			</div>
+	
+			<!-- Modal 2 -->
+			<div class="modal-overlay" id="modal2">
+				<div class="modal modal-pay">
+					<span class="modal-close"><img src="images/close.svg" alt=""> я не хочу знать свой код судьбы</span>
+
+					<div class="modal-title">
+						<p>Открой полностью</p>
+						<div class="gradient-text">
+							<span>Твой Код Личности</span>
+						</div>
+					</div>
+					<div class="modal-text modal-text-pay">
+						<p>За эту цену ты получишь полный разбор Твоего Кода Судьбы — поймёшь, как с ним работать и раскрыть свой потенциал.</p>
+						<div class="d-flex">
+							<div class="gradient-text">
+								<span>Всего $9.99</span>
+							</div>
+							<del>15.99</del>
+						</div>
+					</div>
+					
+					<div class="modal-form">
+						<form action="#">
+							<div class="pay-select">
+								<button type="button" class="white-btn">Google Pay</button>
+								<button type="button" class="white-btn">Apple Pay</button>
+							</div>
+
+							<div class="form-in">
+								<div class="form-group">
+									<input type="email" name="email" placeholder="Email">
+								</div>
+								<div class="form-group two">
+									<span>Данные карты</span>
+									<div class="form-inputs i-num">
+										<input type="text" id="card-number" name="card-number" placeholder="0000 0000 0000 0000" maxlength="19">
+									</div>
+									<div class="d-flex">
+										<div class="form-inputs i-date">
+											<input type="text" id="card-date" name="card-date" placeholder="MM / YY" maxlength="5">
+										</div>
+										<div class="form-inputs i-cvc">
+											<input type="text" id="card-cvc" name="card-cvc" placeholder="CVC" maxlength="4">
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="safe-pay">
+								<span><img src="images/lock-modal.svg" alt=""> Полностью безопасная оплата!</span>
+							</div>
+
+							<div class="pay-btn">
+								<button type="submit" class="form-btn">Оплатить</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+
 		</div>
 
 		<script src="js/jquery-3.7.0.min.js"></script>

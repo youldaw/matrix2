@@ -73,12 +73,153 @@ $(function () {
 });
 
 
+
+function startProgress() {
+  let $percent = $(".percent-value");
+  let $pauseNumbers = $(".pause-number");
+  let $progress = $(".progress");
+
+  let currentPercent = 0;
+  let speed = 50; // progress yangilanish tezligi
+  let pauses = [20, 40, 60, 80, 100];
+  let pauseIndex = 0;
+  let maxRand = 0;
+
+  $(".matrix").hide(); // dastlab matrix yashirinadi
+
+  function updateProgress(percent) {
+    let deg = (percent / 100) * 360;
+    $progress.css(
+      "background",
+      `conic-gradient(#D0B15A ${deg}deg, rgba(148, 153, 129, 0) ${deg}deg)`
+    );
+  }
+
+  let usedIndexes = []; // ishlatilgan indekslar
+
+  // Dropdownlar ketma-ket pastdan tepaga chiqadigan animatsiya
+  function animateDropdowns() {
+    $('.matrix .dropdown').each(function (i) {
+      $(this).hide().delay(i * 150).slideDown(400);
+    });
+  }
+
+  function goNext() {
+    if (currentPercent < 100) {
+      currentPercent++;
+      $percent.text(currentPercent + "%");
+      updateProgress(currentPercent);
+
+      if (currentPercent === pauses[pauseIndex]) {
+        let availableIndexes = $pauseNumbers
+          .map((i) => !usedIndexes.includes(i) ? i : null)
+          .get();
+
+        if (availableIndexes.length === 0) {
+          goNext();
+          return;
+        }
+
+        let randIdx = availableIndexes[Math.floor(Math.random() * availableIndexes.length)];
+        usedIndexes.push(randIdx);
+
+        let $activeNum = $pauseNumbers.eq(randIdx);
+        $pauseNumbers.removeClass("active");
+        $activeNum.addClass("active");
+
+        let $b = $activeNum.find("b");
+        maxRand = Math.random() < 0.5 ? 10 : 20;
+
+        let pauseInterval = setInterval(function () {
+          let randNum = Math.floor(Math.random() * maxRand) + 1;
+          $b.text(randNum);
+        }, 100);
+
+        pauseIndex++;
+
+        setTimeout(function () {
+          clearInterval(pauseInterval);
+          goNext();
+        }, 1000);
+
+        return;
+      }
+
+      let $currentActive = $(".pause-number.active b");
+      if ($currentActive.length) {
+        let randNum = Math.floor(Math.random() * maxRand) + 1;
+        $currentActive.text(randNum);
+      }
+
+      setTimeout(goNext, speed);
+    } else {
+      // Progress tugagach matrix fadeIn bo'ladi va dropdown animatsiyasi ishga tushadi
+      $(".first-show").fadeOut(500, function () {
+        $(".matrix").fadeIn(500, function () {
+          animateDropdowns(); // dropdownlar ketma-ket pastdan tepaga chiqadi
+        });
+      });
+    }
+  }
+
+  goNext();
+}
+
+
+
 $(document).ready(function () {
 
+  // Gender buttonlarni default holatga qaytarish
   function resetGenderButtons() {
     $('.gender-button').removeClass('active inactive');
   }
 
+  // Animate spans funksiyasi (tab-step 4 uchun)
+  function startAnimateSpans() {
+    const $spans = $('.animate-spans span');
+    let currentIndex = 0;
+    const count = $spans.length;
+
+    $spans.removeClass('active'); // oldingi active larni tozalash
+    $spans.eq(currentIndex).addClass('active');
+
+    return setInterval(() => {
+      $spans.eq(currentIndex).removeClass('active');
+      currentIndex = (currentIndex + 1) % count;
+      $spans.eq(currentIndex).addClass('active');
+    }, 2200);
+  }
+
+  // Animated-up2 harflar animatsiyasi
+  function startUpAnimation() {
+    let upTextEl = $('.animated-up2 .h2');
+    let upText = upTextEl.text();
+    upTextEl.empty();
+
+    $.each(upText.split(''), function (i, char) {
+      $('<span>')
+        .text(char)
+        .css('animation-delay', (i * 0.05) + 's')
+        .appendTo(upTextEl);
+    });
+  }
+
+  // Dropdownlar pastdan tepaga ketma-ket chiqish animatsiyasi
+  function animateDropdowns() {
+    const $dropdowns = $('.matrix .dropdown');
+
+    $dropdowns.each(function (i) {
+      const $this = $(this);
+      setTimeout(function () {
+        $this.stop(true, true).slideDown(400); // pastdan tepaga silliq chiqadi
+      }, i * 150); // har bir dropdown 150ms kechikish bilan chiqadi
+    });
+  }
+
+
+  let animateSpansInterval; // animate spans intervalni saqlash
+
+  // Tab-step funksiyasi
   function goToStep(index) {
     let steps = $('.tab-steps--list li');
     let contents = $(".tab-steps > li");
@@ -86,25 +227,39 @@ $(document).ready(function () {
     if (index < 0) index = 0;
     if (index >= steps.length) index = steps.length - 1;
 
+    // Step list aktiv holat
     steps.each(function (i) {
       $(this).toggleClass('active', i <= index);
     });
 
+    // Step content aktiv holat
     contents.removeClass("active");
     contents.eq(index).addClass("active");
 
-    // Step-four (index 3) bo'lsa progressni ishga tushiramiz
+    // Step 4 (index 3) bo‘lsa barcha animatsiyalar ishga tushadi
     if (index === 3) {
       startProgress();
+
+      if (animateSpansInterval) clearInterval(animateSpansInterval);
+      animateSpansInterval = startAnimateSpans();
+
+      startUpAnimation();
+
+      // Faqat .matrix display block bo‘lsa dropdown animatsiyasi
+      // Page load yoki step 4 ishga tushganda
+      if ($('.matrix').css('display') === 'block') {
+        $('.matrix .dropdown').hide(); // oldin dropdownlarni yashiramiz
+        animateDropdowns();
+      }
     }
 
-    // Agar step 0 ga qaytilsa gender-buttonlarni default holatga qaytaramiz
+    // Agar step 0 ga qaytilsa gender buttonlarni reset qilamiz
     if (index === 0) {
       resetGenderButtons();
     }
   }
 
-  // Step bosganda
+  // Step bosilganda
   $('.tab-steps--list li').click(function () {
     let targetIndex = $(this).index();
     setTimeout(function () {
@@ -146,105 +301,11 @@ $(document).ready(function () {
     }, 1000);
   });
 
-
-
+  // Agar .matrix displayi page loadda block bo‘lsa dropdown animatsiyasi
+  if ($('.matrix').hasClass('active') || $('.matrix').css('display') === 'block') {
+    animateDropdowns();
+  }
 });
-
-
-
-
-
-
-// Progress kodi
-function startProgress() {
-  let $percent = $(".percent-value");
-  let $pauseNumbers = $(".pause-number");
-  let $progress = $(".progress");
-
-  let currentPercent = 0;
-  let speed = 50;
-  let pauses = [20, 40, 60, 80, 100];
-  let pauseIndex = 0;
-  let maxRand = 20;
-
-  $(".matrix").hide();
-
-  function updateProgress(percent) {
-    let deg = (percent / 100) * 360;
-    $progress.css(
-      "background",
-      `conic-gradient(#D0B15A ${deg}deg, rgba(148, 153, 129, 0) ${deg}deg)`
-    );
-  }
-
-  // Doimiy sonlarni yangilovchi intervallar massiv
-  let intervals = [];
-
-  // Doimiy pauseNumbers sonlarini yangilash
-  $pauseNumbers.each(function () {
-    let $num = $(this);
-    let interval = setInterval(() => {
-      let randNum = Math.floor(Math.random() * maxRand) + 1;
-      $num.text(randNum);
-    }, speed);
-    intervals.push(interval);
-  });
-
-  let usedIndexes = [];
-
-  function goNext() {
-    if (currentPercent < 100) {
-      currentPercent++;
-      $percent.text(currentPercent + "%");
-      updateProgress(currentPercent);
-
-      if (currentPercent === pauses[pauseIndex]) {
-        // Active raqamni o'zgartirish
-        let availableIndexes = $pauseNumbers
-          .map((i) => (!usedIndexes.includes(i) ? i : null))
-          .get();
-
-        if (availableIndexes.length === 0) {
-          // Hammasi ishlatilgan bo‘lsa, o'zgartirishni to'xtatamiz
-          pauseIndex++;
-          setTimeout(goNext, speed);
-          return;
-        }
-
-        let randIdx = availableIndexes[Math.floor(Math.random() * availableIndexes.length)];
-        usedIndexes.push(randIdx);
-
-        $pauseNumbers.removeClass("active");
-        $pauseNumbers.eq(randIdx).addClass("active");
-
-        // maxRand ni o'zgartirish mumkin, agar kerak bo'lsa
-        maxRand = Math.random() < 0.5 ? 10 : 20;
-
-        pauseIndex++;
-
-        setTimeout(goNext, 1000); // 1 sekund kutib davom etamiz
-
-        return;
-      }
-
-      setTimeout(goNext, speed);
-    } else {
-      // Tugaganda intervalni tozalash
-      intervals.forEach(clearInterval);
-
-      $(".first-show").fadeOut(500, function () {
-        $(".matrix").fadeIn(500);
-      });
-    }
-  }
-
-  goNext();
-}
-
-
-
-
-
 
 
 
@@ -265,19 +326,87 @@ $(document).ready(function () {
     $(this).addClass('active');
   });
 
-  const $spans = $('.animate-spans span');
-  let currentIndex = 0;
-  const count = $spans.length;
 
-  $spans.eq(currentIndex).addClass('active');
+  // Modalni ochish
+  $(".open-modal").click(function () {
+    var modalID = $(this).data("modal");
+    $(modalID).css("display", "flex").hide().fadeIn(200);
+  });
 
-  setInterval(() => {
-    $spans.eq(currentIndex).removeClass('active');
-    currentIndex = (currentIndex + 1) % count;
-    $spans.eq(currentIndex).addClass('active');
-  }, 2000);
+  // Modalni yopish
+  $(".modal-close, .modal-overlay").click(function (e) {
+    if (e.target !== this) return; // faqat overlay yoki close tugma bosilganda yopiladi
+    $(this).closest(".modal-overlay").fadeOut(200);
+  });
+
+
+  // pay select
+  $('.pay-select .white-btn').click(function () {
+    $('.pay-select .white-btn').removeClass('active');
+    $(this).addClass('active');
+  });
+
+  // Card number formatlash 0000 0000 0000 0000
+  $('#card-number').on('input', function () {
+    let value = $(this).val().replace(/\D/g, '').slice(0, 16);
+    let formatted = value.replace(/(.{4})/g, '$1 ').trim();
+    $(this).val(formatted);
+  });
+
+  // Expiration date formatlash MM/YY
+  $('#card-date').on('input', function () {
+    let value = $(this).val().replace(/\D/g, '').slice(0, 4);
+    if (value.length >= 3) {
+      value = value.replace(/(\d{2})(\d{1,2})/, '$1/$2');
+    }
+    $(this).val(value);
+  });
+
+  // CVC input (faqat raqam)
+  $('#card-cvc').on('input', function () {
+    let value = $(this).val().replace(/\D/g, '').slice(0, 4);
+    $(this).val(value);
+  });
 
 });
+
+
+
+$(document).ready(function () {
+    let modalOpened = false; // modal ochilganmi flag
+
+    // Click orqali modal ochish
+    $(".open-modal").click(function () {
+        var modalID = $(this).data("modal");
+        $(modalID).fadeIn(200).css("display", "flex");
+    });
+
+    // Modal yopish
+    $(".modal-close, .modal-overlay").click(function (e) {
+        if ($(e.target).hasClass("modal-overlay") || $(e.target).hasClass("modal-close")) {
+            $(".modal-overlay").fadeOut(200);
+            modalOpened = true; // yopilgach yana ochilmasligi uchun
+        }
+    });
+
+    // tab-steps--four active bo‘lganda 5s dan keyin modal ochish
+    function checkAndOpenModal() {
+        if (!modalOpened && $(".tab-steps--four").hasClass("active")) {
+            modalOpened = true; // ochishni faqat bir marta ishlatish uchun flag
+            setTimeout(function () {
+                $("#modal1").fadeIn(200).css("display", "flex");
+            }, 15000); // 10 sekund
+        }
+    }
+
+    // Boshlang'ich tekshirish
+    checkAndOpenModal();
+
+    // Dinamik class o‘zgarishini kuzatish
+    const observer = new MutationObserver(checkAndOpenModal);
+    observer.observe(document.body, { attributes: true, subtree: true });
+});
+
 
 
 
@@ -662,42 +791,6 @@ class IosSelector {
 }
 
 // Логика даты
-// Yillar: 1900 yildan hozirgi yilgacha
-// function getYears() {
-//   let currentYear = new Date().getFullYear();
-//   return Array.from(
-//     { length: currentYear - 1900 + 1 },
-//     (_, i) => ({
-//       value: 1900 + i,
-//       text: 1900 + i
-//     })
-//   );
-// }
-
-// // OylarnI nomi bilan
-// function getMonths() {
-//   const monthNames = [
-//     'Yanvar', 'Fevral', 'Mart', 'Aprel', 'May', 'Iyun',
-//     'Iyul', 'Avgust', 'Sentyabr', 'Oktyabr', 'Noyabr', 'Dekabr'
-//   ];
-//   return monthNames.map(name => ({
-//     value: name,
-//     text: name
-//   }));
-// }
-
-// // Kunlar: 1 dan 31 gacha
-// function getDays() {
-//   return Array.from(
-//     { length: 31 },
-//     (_, i) => ({
-//       value: i + 1,
-//       text: i + 1
-//     })
-//   );
-// }
-
-
 function getYears() {
   let currentYear = new Date().getFullYear();
   return Array.from(
