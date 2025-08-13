@@ -111,12 +111,6 @@ function startProgress() {
 
   let usedIndexes = [];
 
-  function animateDropdowns() {
-    $('.matrix .dropdown').each(function (i) {
-      $(this).hide().delay(i * 150).slideDown(400);
-    });
-  }
-
   function goNext() {
     if (currentPercent < 100) {
       currentPercent++;
@@ -167,9 +161,7 @@ function startProgress() {
       setTimeout(goNext, speed);
     } else {
       $(".first-show").fadeOut(500, function () {
-        $(".matrix").fadeIn(500, function () {
-          animateDropdowns();
-        });
+        $(".matrix").fadeIn(500);
       });
     }
   }
@@ -193,6 +185,7 @@ function goToStep(index) {
     startUpAnimation();
   }
 }
+
 
 
 
@@ -227,20 +220,6 @@ $(document).ready(function () {
     setTimeout(showNext, 2200);
   }
 
-
-  // Dropdownlar pastdan tepaga ketma-ket chiqish animatsiyasi
-  function animateDropdowns() {
-    const $dropdowns = $('.matrix .dropdown');
-
-    $dropdowns.each(function (i) {
-      const $this = $(this);
-      setTimeout(function () {
-        $this.stop(true, true).slideDown(400); // pastdan tepaga silliq chiqadi
-      }, i * 150); // har bir dropdown 150ms kechikish bilan chiqadi
-    });
-  }
-
-
   let animateSpansInterval; // animate spans intervalni saqlash
 
   // Tab-step funksiyasi
@@ -267,7 +246,7 @@ $(document).ready(function () {
       $('.tab-steps--list').css('opacity', '1');
     }
 
-    // Step 4 (index 3) bo‘lsa barcha animatsiyalar ishga tushadi
+    // Step 4 (index 3) bo‘lsa animatsiyalar ishga tushadi
     if (index === 3) {
       startProgress();
 
@@ -275,13 +254,6 @@ $(document).ready(function () {
       animateSpansInterval = startAnimateSpans();
 
       startUpAnimation();
-
-      // Faqat .matrix display block bo‘lsa dropdown animatsiyasi
-      // Page load yoki step 4 ishga tushganda
-      if ($('.matrix').css('display') === 'block') {
-        $('.matrix .dropdown').hide(); // oldin dropdownlarni yashiramiz
-        animateDropdowns();
-      }
     }
 
     // Agar step 0 ga qaytilsa gender buttonlarni reset qilamiz
@@ -317,23 +289,18 @@ $(document).ready(function () {
   });
 
   $('.gender-button.next').click(function () {
-  if ($(this).hasClass('active')) return;
+    if ($(this).hasClass('active')) return;
 
-  $(this).addClass('active');
-  $('.gender-button').not(this).addClass('inactive');
+    $(this).addClass('active');
+    $('.gender-button').not(this).addClass('inactive');
 
-  setTimeout(() => {
-    goToStep(1); // 2-chi stepga o'tish
-    // ❌ resetGenderButtons() bu yerda bo'lmaydi
-  }, 1000);
+    setTimeout(() => {
+      goToStep(1); // 2-chi stepga o'tish
+    }, 1000);
+  });
+
 });
 
-
-  // Agar .matrix displayi page loadda block bo‘lsa dropdown animatsiyasi
-  if ($('.matrix').hasClass('active') || $('.matrix').css('display') === 'block') {
-    animateDropdowns();
-  }
-});
 
 
 

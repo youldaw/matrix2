@@ -1349,6 +1349,26 @@ button {
   cursor: pointer;
 }
 
+/* Faqat iOS Safari'ga scope (boshqa brauzerlarni bezovta qilmaydi) */
+@supports (-webkit-touch-callout: none) {
+  /* Tap-da chiqadigan qora/ko'm-ko'k highlightni o'chirish */
+  a, button {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Fokus/aktivda chiqadigan halqa/soyalarni bekor qilish */
+  a:focus, a:active,
+  button:focus, button:active {
+    outline: none !important;
+    box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+  }
+
+  /* Eski WebKit fokus halqasini ham tozalab yuboramiz */
+  a:focus, button:focus {
+    -webkit-focus-ring-color: rgba(0,0,0,0);
+  }
+}
 
 
 
