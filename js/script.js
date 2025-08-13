@@ -14,16 +14,22 @@ $(function () {
   });
 
   // 2. Твой Код Личности – left to right
-  let leftTextEl = $('.animated-left');
-  let leftText = leftTextEl.text();
-  leftTextEl.empty();
+  let typeJsText = document.querySelector(".typeJsText");
+  let fullText = typeJsText.dataset.typetext;
+  let counter = 0;
 
-  $.each(leftText.split(''), function (i, char) {
-    $('<span>')
-      .text(char)
-      .css('animation-delay', (i * 0.05) + 's')
-      .appendTo(leftTextEl);
-  });
+  typeJsText.innerHTML = "";
+
+  function typeJs() {
+    if (counter < fullText.length) {
+      typeJsText.innerHTML += fullText.charAt(counter);
+      counter++;
+    } else {
+      clearInterval(typingInterval); // yozib bo‘lgach to‘xtaydi
+    }
+  }
+
+  let typingInterval = setInterval(typeJs, 50);
 });
 
 
@@ -33,15 +39,14 @@ $(function () {
 
   // Sanash ketma-ketligi
   var sequences = [
+    [1, 11],
+    [11, 4],
+    [4, 15],
+    [15, 1],
     [1, 8],
-    [8, 3],
-    [3, 10],
-    [10, 15],
-    [15, 22],
-    [22, 10],
-    [10, 3],
-    [3, 10],
-    [10, 22]
+    [8, 18],
+    [18, 6],
+    [6, 1]
   ];
 
   var stepIndex = 0;
@@ -74,6 +79,15 @@ $(function () {
 
 
 
+// Faqat bir marta progressni boshlash uchun flag
+let progressStarted = false;
+
+function startUpAnimation() {
+  if (progressStarted) return; // allaqachon boshlangan bo‘lsa, qaytish
+  progressStarted = true;
+  startProgress();
+}
+
 function startProgress() {
   let $percent = $(".percent-value");
   let $pauseNumbers = $(".pause-number");
@@ -81,11 +95,11 @@ function startProgress() {
 
   let currentPercent = 0;
   let speed = 50; // progress yangilanish tezligi
-  let pauses = [20, 40, 60, 80, 100];
+  let pauses = [1, 20, 40, 60, 80, 100];
   let pauseIndex = 0;
   let maxRand = 0;
 
-  $(".matrix").hide(); // dastlab matrix yashirinadi
+  $(".matrix").hide();
 
   function updateProgress(percent) {
     let deg = (percent / 100) * 360;
@@ -95,9 +109,8 @@ function startProgress() {
     );
   }
 
-  let usedIndexes = []; // ishlatilgan indekslar
+  let usedIndexes = [];
 
-  // Dropdownlar ketma-ket pastdan tepaga chiqadigan animatsiya
   function animateDropdowns() {
     $('.matrix .dropdown').each(function (i) {
       $(this).hide().delay(i * 150).slideDown(400);
@@ -130,33 +143,32 @@ function startProgress() {
         let $b = $activeNum.find("b");
         maxRand = Math.random() < 0.5 ? 10 : 20;
 
+        let counter = 1;
+        $b.text(counter);
+
         let pauseInterval = setInterval(function () {
-          let randNum = Math.floor(Math.random() * maxRand) + 1;
-          $b.text(randNum);
+          if (counter < maxRand) {
+            counter++;
+            $b.text(counter);
+          } else {
+            clearInterval(pauseInterval);
+          }
         }, 100);
 
         pauseIndex++;
 
         setTimeout(function () {
-          clearInterval(pauseInterval);
           goNext();
         }, 1000);
 
         return;
       }
 
-      let $currentActive = $(".pause-number.active b");
-      if ($currentActive.length) {
-        let randNum = Math.floor(Math.random() * maxRand) + 1;
-        $currentActive.text(randNum);
-      }
-
       setTimeout(goNext, speed);
     } else {
-      // Progress tugagach matrix fadeIn bo'ladi va dropdown animatsiyasi ishga tushadi
       $(".first-show").fadeOut(500, function () {
         $(".matrix").fadeIn(500, function () {
-          animateDropdowns(); // dropdownlar ketma-ket pastdan tepaga chiqadi
+          animateDropdowns();
         });
       });
     }
@@ -164,6 +176,24 @@ function startProgress() {
 
   goNext();
 }
+
+// Misol uchun goToStep funksiyasi
+function goToStep(index) {
+  let steps = $('.tab-steps--list li');
+  let contents = $(".tab-steps > li");
+
+  if (index < 0) index = 0;
+  if (index >= steps.length) index = steps.length - 1;
+
+  steps.removeClass("active").eq(index).addClass("active");
+  contents.removeClass("active").eq(index).addClass("active");
+
+  // Agar 4-chi step active bo‘lsa, progressni boshlash
+  if ($('.tab-steps--four').hasClass('active')) {
+    startUpAnimation();
+  }
+}
+
 
 
 
@@ -183,26 +213,20 @@ $(document).ready(function () {
     $spans.removeClass('active'); // oldingi active larni tozalash
     $spans.eq(currentIndex).addClass('active');
 
-    return setInterval(() => {
-      $spans.eq(currentIndex).removeClass('active');
-      currentIndex = (currentIndex + 1) % count;
-      $spans.eq(currentIndex).addClass('active');
-    }, 2200);
+    function showNext() {
+      // Oldingisini faqat oxirgi bo‘lmasa o‘chir
+      if (currentIndex < count - 1) {
+        $spans.eq(currentIndex).removeClass('active');
+        currentIndex++;
+        $spans.eq(currentIndex).addClass('active');
+        setTimeout(showNext, 2200);
+      }
+      // agar oxirgi span bo‘lsa — class qoladi va to‘xtaydi
+    }
+
+    setTimeout(showNext, 2200);
   }
 
-  // Animated-up2 harflar animatsiyasi
-  function startUpAnimation() {
-    let upTextEl = $('.animated-up2 .h2');
-    let upText = upTextEl.text();
-    upTextEl.empty();
-
-    $.each(upText.split(''), function (i, char) {
-      $('<span>')
-        .text(char)
-        .css('animation-delay', (i * 0.05) + 's')
-        .appendTo(upTextEl);
-    });
-  }
 
   // Dropdownlar pastdan tepaga ketma-ket chiqish animatsiyasi
   function animateDropdowns() {
@@ -236,6 +260,13 @@ $(document).ready(function () {
     contents.removeClass("active");
     contents.eq(index).addClass("active");
 
+    // tab-steps--one active bo'lsa list opacity 0 bo'ladi
+    if ($('.tab-steps--one').hasClass('active')) {
+      $('.tab-steps--list').css('opacity', '0');
+    } else {
+      $('.tab-steps--list').css('opacity', '1');
+    }
+
     // Step 4 (index 3) bo‘lsa barcha animatsiyalar ishga tushadi
     if (index === 3) {
       startProgress();
@@ -259,23 +290,13 @@ $(document).ready(function () {
     }
   }
 
-  // Step bosilganda
-  $('.tab-steps--list li').click(function () {
-    let targetIndex = $(this).index();
-    setTimeout(function () {
-      goToStep(targetIndex);
-      resetGenderButtons();
-    }, 1000);
-  });
-
   // Next tugmasi
   $('.next').click(function (e) {
     e.preventDefault();
     let currentIndex = $('.tab-steps--list li.active').last().index();
     setTimeout(function () {
       goToStep(currentIndex + 1);
-      resetGenderButtons();
-    }, 800);
+    }, 1000);
   });
 
   // Prev tugmasi
@@ -284,22 +305,29 @@ $(document).ready(function () {
     let currentIndex = $('.tab-steps--list li.active').last().index();
     setTimeout(function () {
       goToStep(currentIndex - 1);
-      resetGenderButtons();
-    }, 800);
-  });
-
-  // Gender-button bosilganda animatsiya va keyingi stepga o'tish
-  $('.gender-button.next').click(function () {
-    if ($(this).hasClass('active')) return;
-
-    $(this).addClass('active');
-    $('.gender-button').not(this).addClass('inactive');
-
-    setTimeout(() => {
-      goToStep(1);  // 2-chi stepga o'tish
-      resetGenderButtons(); // keyingi stepga o'tgach default holatga qaytish
     }, 1000);
   });
+
+  // Step bosilganda
+  $('.tab-steps--list li').click(function () {
+    let targetIndex = $(this).index();
+    setTimeout(function () {
+      goToStep(targetIndex);
+    }, 1000);
+  });
+
+  $('.gender-button.next').click(function () {
+  if ($(this).hasClass('active')) return;
+
+  $(this).addClass('active');
+  $('.gender-button').not(this).addClass('inactive');
+
+  setTimeout(() => {
+    goToStep(1); // 2-chi stepga o'tish
+    // ❌ resetGenderButtons() bu yerda bo'lmaydi
+  }, 1000);
+});
+
 
   // Agar .matrix displayi page loadda block bo‘lsa dropdown animatsiyasi
   if ($('.matrix').hasClass('active') || $('.matrix').css('display') === 'block') {
@@ -373,39 +401,46 @@ $(document).ready(function () {
 
 
 $(document).ready(function () {
-    let modalOpened = false; // modal ochilganmi flag
+  let modalOpened = false; // Modal ochilganini belgilovchi flag
+  let modalTimer = null;   // Timer ID
 
-    // Click orqali modal ochish
-    $(".open-modal").click(function () {
-        var modalID = $(this).data("modal");
-        $(modalID).fadeIn(200).css("display", "flex");
-    });
+  // Modalni qo'lda ochish
+  $(".open-modal").click(function () {
+    var modalID = $(this).data("modal");
+    $(modalID).fadeIn(200).css("display", "flex");
+  });
 
-    // Modal yopish
-    $(".modal-close, .modal-overlay").click(function (e) {
-        if ($(e.target).hasClass("modal-overlay") || $(e.target).hasClass("modal-close")) {
-            $(".modal-overlay").fadeOut(200);
-            modalOpened = true; // yopilgach yana ochilmasligi uchun
-        }
-    });
-
-    // tab-steps--four active bo‘lganda 5s dan keyin modal ochish
-    function checkAndOpenModal() {
-        if (!modalOpened && $(".tab-steps--four").hasClass("active")) {
-            modalOpened = true; // ochishni faqat bir marta ishlatish uchun flag
-            setTimeout(function () {
-                $("#modal1").fadeIn(200).css("display", "flex");
-            }, 15000); // 10 sekund
-        }
+  // Modal yopish
+  $(".modal-close, .modal-overlay").click(function (e) {
+    if ($(e.target).hasClass("modal-overlay") || $(e.target).hasClass("modal-close")) {
+      $(".modal-overlay").fadeOut(200);
+      modalOpened = true; // Yopilgandan keyin qaytib ochilmasligi uchun
+      if (modalTimer) {
+        clearTimeout(modalTimer); // Timer to'xtatish
+      }
     }
+  });
 
-    // Boshlang'ich tekshirish
-    checkAndOpenModal();
+  // Tab holatini tekshirish
+  function checkAndOpenModal() {
+    // Agar 4-step active bo'lsa va modal hali ochilmagan bo'lsa
+    if ($(".tab-steps--four").hasClass("active") && !modalOpened && !modalTimer) {
+      modalTimer = setTimeout(function () {
+        $("#modal1").fadeIn(200).css("display", "flex");
+        modalOpened = true; // Faqat bir marta ochiladi
+      }, 15000); // 5 sekund
+    } else if (!$(".tab-steps--four").hasClass("active") && modalTimer) {
+      // Agar stepdan chiqib ketilsa — timer to‘xtatiladi
+      clearTimeout(modalTimer);
+      modalTimer = null;
+    }
+  }
 
-    // Dinamik class o‘zgarishini kuzatish
-    const observer = new MutationObserver(checkAndOpenModal);
-    observer.observe(document.body, { attributes: true, subtree: true });
+  // Class o‘zgarishini kuzatish
+  const observer = new MutationObserver(checkAndOpenModal);
+  observer.observe(document.body, { attributes: true, subtree: true, attributeFilter: ["class"] });
 });
+
 
 
 
